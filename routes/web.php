@@ -14,14 +14,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome', ['name' => 'Blog']);
-});
-Route::resource('/posts', 'PostController');
+
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('index');
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home', function () {
+    return redirect('/posts');
+});
 
-Route::get('users', 'UserController@index')->name('user');
-Route::get('users/(id)', 'UserController@show')->name('user');
+
+Route::get('/delete-blank-post', [App\Http\Controllers\PostController::class, 'deleteBlank']);
+Route::get('/posts-archive', [App\Http\Controllers\PostController::class, 'archive']);
+Route::get('/posts/{id}/restore', [App\Http\Controllers\PostController::class, 'restore']);
+Route::resource('/posts', App\Http\Controllers\PostController::class);
+Route::resource('/posts', 'PostController')->middleware('auth');
+Route::resource('/comments', App\Http\Controllers\CommentController::class);
